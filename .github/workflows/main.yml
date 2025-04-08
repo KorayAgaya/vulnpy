@@ -21,7 +21,7 @@ jobs:
 
       - name: Download KDT
         run: |
-          curl -sSLf https://github.com/Kondukto-io/kdt/releases/latest/download/kdt-linux -o kdt
+          curl -L https://github.com/Kondukto-io/kdt/releases/latest/download/kdt-linux -o kdt
           chmod +x kdt
           sudo mv kdt /usr/local/bin/kdt
 
