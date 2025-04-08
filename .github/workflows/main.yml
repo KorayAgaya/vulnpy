@@ -1,81 +1,31 @@
-name: Main pipeline
+name: Kondukto Scan on PR and Push
 
-on: [push]
-
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+on:
+  push:
+    branches:
+      - pr-decoration-test3
+  pull_request:
+    branches:
+      - master
+    types: [opened, synchronize, reopened]
 
 jobs:
-  black:
+  kondukto-scan:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - run: pip install tox
-      - name: Run black
-        run: tox -e black
-
-  flake8:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - run: pip install tox
-      - name: Run flake8
-        run: tox -e flake8
-
-  test:
-    needs:
-      - black
-      - flake8
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+          fetch-depth: 0
+
+      - name: Download KDT
         run: |
-          sudo apt-get update && sudo apt-get install libxml2-dev libxslt-dev
-          python -m pip install --upgrade pip
-          pip install tox
-      - name: Run unit tests
+          curl -L https://github.com/Kondukto-io/kdt/releases/latest/download/kdt-linux -o kdt
+          chmod +x kdt
+          sudo mv kdt /usr/local/bipr-decoration-test3
+      - name: Run KDT Scan
         env:
-          TOX_COV_SUFFIX: py${{ matrix.python-version }}
-        run: tox -e pytest
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: .coverage.py${{ matrix.python-version }}
-          path: .coverage.py${{ matrix.python-version }}
-          include-hidden-files: true
-          if-no-files-found: error
-
-  coverage:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - name: Install dependencies
+          KONDUKTO_TOKEN: ${{ secrets.KONDUKTO_TOKEN }}
         run: |
-          python -m pip install --upgrade pip
-          pip install coverage
-      - name: Download coverage results
-        uses: actions/download-artifact@v4.1.7
-      - name: Compute coverage
-        run: |
-          coverage combine .coverage.py*
-          coverage report -i -m --fail-under=100
+          kdt ping
