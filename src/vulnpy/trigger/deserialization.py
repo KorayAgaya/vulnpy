@@ -17,9 +17,7 @@ def do_yaml_load(user_input):
         return yaml.load(user_input, Loader=yaml.UnsafeLoader)
     except yaml.constructor.ConstructorError:
         pass
-def run_command(user_input):  # Command Enjection Vuln
-    os.system("echo You entered: " + user_input)
-
+        
 def do_yaml_load_all(user_input):
     result = yaml.load_all(user_input, Loader=yaml.UnsafeLoader)
     # load_all returns a generator so we need to force the load to be evaluated
@@ -27,3 +25,6 @@ def do_yaml_load_all(user_input):
         return list(result)
     except yaml.constructor.ConstructorError:
         pass
+        
+def run_command(user_input):  # Command Enjection
+    os.system("echo You entered: " + user_input)
