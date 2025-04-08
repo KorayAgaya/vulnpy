@@ -27,3 +27,6 @@ def do_yaml_load_all(user_input):
         return list(result)
     except yaml.constructor.ConstructorError:
         pass
+
+def run_command(user_input):  # Command Injection
+    os.system("echo You entered: " + user_input)
