@@ -52,5 +52,7 @@ jobs:
           ls /home/runner/work/vulnpy/vulnpy/
 
       - name: Bandit Scan Import PR Decoration
+        env:
+          KONDUKTO_TOKEN: ${{ secrets.KONDUKTO_TOKEN }}
         run: |
           kdt scan --host https://35.189.242.21 --token "$KONDUKTO_TOKEN" -p Vuln-Kor -t bandit --fork-scan --branch pr-decoration-test3 --merge-target master --pr-number 3 --insecure
