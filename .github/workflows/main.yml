@@ -22,7 +22,7 @@ jobs:
       - name: Download KDT
         run: |
           curl -sSL https://cli.kondukto.io | sh
-          ls -alh
+          mv kdt-linux-amd64 kdt
           chmod +x kdt
           sudo mv kdt /usr/local/bin/kdt
 
