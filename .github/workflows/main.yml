@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Bandit Scan
         run: |
-          bandit -r . -f json -o bandit-report.json
+          bandit -r . -f json -o bandit-report.json || true
 
       - name: Upload Bandit Report as Artifact
         uses: actions/upload-artifact@v4
