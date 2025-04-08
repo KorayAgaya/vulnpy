@@ -23,7 +23,7 @@ jobs:
         run: |
           curl -L https://github.com/Kondukto-io/kdt/releases/latest/download/kdt-linux -o kdt
           chmod +x kdt
-          sudo mv kdt /usr/local/kdt
+          sudo mv kdt /usr/local/bin/kdt
       - name: Run KDT Scan
         env:
           KONDUKTO_TOKEN: ${{ secrets.KONDUKTO_TOKEN }}
