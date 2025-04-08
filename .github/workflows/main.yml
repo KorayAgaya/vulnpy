@@ -27,4 +27,4 @@ jobs:
         env:
           KONDUKTO_TOKEN: ${{ secrets.KONDUKTO_TOKEN }}
         run: |
-          kdt ping --host https://35.189.242.21 --token "$KONDUKTO_TOKEN"
+          kdt ping --host https://35.189.242.21 --token "$KONDUKTO_TOKEN" --insecure
