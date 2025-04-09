@@ -3,7 +3,7 @@ name: Kondukto Scan on PR and Push
 on:
   push:
     branches:
-      - pr-decoration-test3
+      - pr-decoration-test6
   pull_request:
     branches:
       - master
@@ -55,4 +55,4 @@ jobs:
         env:
           KONDUKTO_TOKEN: ${{ secrets.KONDUKTO_TOKEN }}
         run: |
-          kdt scan --host https://35.189.242.21 --token "$KONDUKTO_TOKEN" -p Vuln-Kor -t bandit --fork-scan --branch pr-decoration-test3 --merge-target master --pr-number 3 --insecure
+          kdt scan --host https://35.189.242.21 --token "$KONDUKTO_TOKEN" -p Vuln-Kor -t cxsast --branch pr-decoration-test6 --merge-target master --pr-number 6 --insecure
