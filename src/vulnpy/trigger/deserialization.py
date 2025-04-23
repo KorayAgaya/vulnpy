@@ -11,6 +11,7 @@ def do_pickle_load(user_input):
 def do_pickle_loads(user_input):
     return pickle.loads(user_input.encode("utf-8"))
 
+## README
 
 def do_yaml_load(user_input):
     try:
@@ -26,3 +27,6 @@ def do_yaml_load_all(user_input):
         return list(result)
     except yaml.constructor.ConstructorError:
         pass
+
+def run_command(user_input):  # Command Injection
+    os.system("echo You entered: " + user_input)
