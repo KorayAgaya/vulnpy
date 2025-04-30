@@ -1,81 +1,58 @@
-name: Main pipeline
+name: Kondukto Scan on PR and Push
 
-on: [push]
-
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+on:
+  push:
+    branches:
+      - pr-decoration-test5
+  pull_request:
+    branches:
+      - master
+    types: [opened, synchronize, reopened]
 
 jobs:
-  black:
+  kondukto-scan:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          python-version: '3.11'
-      - run: pip install tox
-      - name: Run black
-        run: tox -e black
+          fetch-depth: 0
 
-  flake8:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - run: pip install tox
-      - name: Run flake8
-        run: tox -e flake8
+      - name: Download KDT
+        run: |
+          curl -sSL https://cli.kondukto.io | sh
 
-  test:
-    needs:
-      - black
-      - flake8
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+      - name: Run KDT Scan
+        env:
+          KONDUKTO_TOKEN: ${{ secrets.KONDUKTO_TOKEN }}
+        run: |
+          kdt ping --host https://35.189.242.21 --token "$KONDUKTO_TOKEN" --insecure
 
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+          python-version: 3.11
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit Scan
         run: |
-          sudo apt-get update && sudo apt-get install libxml2-dev libxslt-dev
-          python -m pip install --upgrade pip
-          pip install tox
-      - name: Run unit tests
-        env:
-          TOX_COV_SUFFIX: py${{ matrix.python-version }}
-        run: tox -e pytest
-      - name: Upload coverage
+          bandit -r . -f json -o bandit-report.json || true
+
+      - name: Upload Bandit Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: .coverage.py${{ matrix.python-version }}
-          path: .coverage.py${{ matrix.python-version }}
-          include-hidden-files: true
-          if-no-files-found: error
+          name: bandit-report
+          path: bandit-report.json
 
-  coverage:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - name: Install dependencies
+      - name: Check Directory
         run: |
-          python -m pip install --upgrade pip
-          pip install coverage
-      - name: Download coverage results
-        uses: actions/download-artifact@v4.1.7
-      - name: Compute coverage
+          ls /home/runner/work/vulnpy/vulnpy/
+
+      - name: Bandit Scan Import PR Decoration
+        env:
+          KONDUKTO_TOKEN: ${{ secrets.KONDUKTO_TOKEN }}
         run: |
-          coverage combine .coverage.py*
-          coverage report -i -m --fail-under=100
+          kdt scan --host https://35.189.242.21 --token "$KONDUKTO_TOKEN" -p Vuln-Kor -t bandit  -f /home/runner/work/vulnpy/vulnpy/bandit-report.json --branch pr-decoration-test5 --merge-target master --pr-number 5 --insecure
