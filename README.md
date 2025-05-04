@@ -9,7 +9,7 @@ insecure web applications, to be used for security testing and demonstration.
 
 VulnPy contains both standalone functions and plug-and-play API extensions to various popular
 Python web frameworks. To use vulnpy with your web framework, be sure to install this package with
-the appropriate extra dependencies specified - detailed below. TesttoKor
+the appropriate extra dependencies specified - detailed below. TesttoKorKor
 
 ### Flask
 
