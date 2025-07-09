@@ -1,0 +1,48 @@
+rules:
+  - id: insecure-eval
+    languages: [python]
+    severity: ERROR
+    message: "Kullanıcı girdisiyle eval kullanımı tehlikelidir."
+    pattern: eval($EXPR)
+
+  - id: insecure-exec
+    languages: [python]
+    severity: ERROR
+    message: "Kullanıcı girdisiyle exec kullanımı tehlikelidir."
+    pattern: exec($EXPR)
+
+  - id: command-injection
+    languages: [python]
+    severity: ERROR
+    message: "Komut enjeksiyonu riski: os.system veya subprocess kullanımı."
+    patterns:
+      - pattern: os.system($CMD)
+      - pattern: subprocess.call($ARGS, ...)
+      - pattern: subprocess.run($ARGS, ...)
+      - pattern: subprocess.Popen($ARGS, ...)
+
+  - id: insecure-deserialization
+    languages: [python]
+    severity: WARNING
+    message: "Pickle kullanımı güvenli değildir."
+    pattern: pickle.loads($DATA)
+
+  - id: file-access
+    languages: [python]
+    severity: WARNING
+    message: "Dosya sistemine doğrudan erişim."
+    pattern: open($FILENAME, $MODE)
+
+  - id: flask-xss
+    languages: [python]
+    severity: WARNING
+    message: "Flask'ta kullanıcı girdisi doğrudan HTML içinde kullanılmamalı."
+    patterns:
+      - pattern: return "<html>..." + $INPUT + "...</html>"
+      - pattern: return f"<html>{...$INPUT...}</html>"
+
+  - id: flask-request-usage
+    languages: [python]
+    severity: INFO
+    message: "Flask request.get parametreleri kontrol edilmeli."
+    pattern: request.args.get($PARAM)
