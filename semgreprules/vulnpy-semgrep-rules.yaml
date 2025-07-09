@@ -38,8 +38,8 @@ rules:
     severity: WARNING
     message: "Flask'ta kullanıcı girdisi doğrudan HTML içinde kullanılmamalı."
     patterns:
-      - pattern: return "<html>..." + $INPUT + "...</html>"
-      - pattern: return f"<html>{...$INPUT...}</html>"
+      - pattern: return "<html>" + $INPUT + "</html>"
+      - pattern: return f"<html>{$INPUT}</html>"
 
   - id: flask-request-usage
     languages: [python]
