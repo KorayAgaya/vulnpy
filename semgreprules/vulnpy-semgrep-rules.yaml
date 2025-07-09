@@ -39,7 +39,7 @@ rules:
     message: "Flask'ta kullanıcı girdisi doğrudan HTML içinde kullanılmamalı."
     patterns:
       - pattern: return "<html>" + $INPUT + "</html>"
-      - pattern: return f"<html>{$INPUT}</html>"
+      - pattern-regex: 'return f"<html>.*{.*}.*</html>"'
 
   - id: flask-request-usage
     languages: [python]
