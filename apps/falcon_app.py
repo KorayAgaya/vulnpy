@@ -26,7 +26,7 @@ class FileUpload(object):
         digest = hexlify(hashlib.sha256(user_input).digest()).decode("utf8")
 
         resp.status = falcon.HTTP_200
-        resp.media = {"status": "ok", "md5": digest}
+        resp.media = {"status": "ok", "sha256": digest}
 
 
 def thread_function(user_input):

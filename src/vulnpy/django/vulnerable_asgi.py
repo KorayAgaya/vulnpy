@@ -55,7 +55,7 @@ def get_trigger_view(name, trigger):
             from django.utils.html import escape
             template += "<p>XSS: " + escape(user_input) + "</p>"
 
-        return HttpResponse(template)
+        return HttpResponse(template, content_type="text/html; charset=utf-8")
 
     return _view
 
