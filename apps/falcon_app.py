@@ -1,5 +1,4 @@
 from binascii import hexlify
-from hashlib import md5
 import os
 import threading
 import sys
@@ -23,13 +22,11 @@ class FileUpload(object):
     def on_post(self, req, resp):
         user_input = req._params["upload"].file.read()
 
-        digest = hexlify(md5(user_input).digest()).decode("utf8")
-
-        cmd = "echo " + str(user_input[:10])
-        os.system(cmd)
+        import hashlib
+        digest = hexlify(hashlib.sha256(user_input).digest()).decode("utf8")
 
         resp.status = falcon.HTTP_200
-        resp.media = {"status": "ok", "md5": digest}
+        resp.media = {"status": "ok", "sha256": digest}
 
 
 def thread_function(user_input):
@@ -60,8 +57,9 @@ def thread_function(user_input):
             print("Context is None")
             sys.exit(1)
 
-    cmd = "echo " + str(user_input)
-    os.system(cmd)
+    import subprocess
+    import shlex
+    subprocess.run(["echo", str(user_input)], capture_output=True)
 
     # Do NOT remove this print as it is used in a testing assertion.
     print("finished background thread")

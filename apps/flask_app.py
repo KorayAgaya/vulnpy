@@ -8,7 +8,7 @@ from vulnpy.flask.blueprint import vulnerable_blueprint
 
 
 loader = FileSystemLoader(Path(__file__).parent / "templates" / "jinja")
-environment = Environment(loader=loader)
+environment = Environment(loader=loader, autoescape=True)
 
 template_blueprint = Blueprint("template-xss", __name__, url_prefix="/template-xss")
 
@@ -26,8 +26,9 @@ app.register_blueprint(vulnerable_blueprint)
 app.register_blueprint(template_blueprint)
 
 
-app.config["SESSION_COOKIE_SECURE"] = False
-app.config["SESSION_COOKIE_HTTPONLY"] = False
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 
 @app.route("/")

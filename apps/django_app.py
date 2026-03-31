@@ -24,9 +24,9 @@ if not settings.configured:
             "ROOT_URLCONF": "django_app"
             if __name__ == "__main__"
             else "apps.django_app",
-            "SECRET_KEY": "test_key",  # pragma: allowlist secret
-            "DEBUG": True,
-            "ALLOWED_HOSTS": ["localhost", "127.0.0.1", "[::1]"],
+            "SECRET_KEY": os.environ.get("DJANGO_SECRET_KEY", os.urandom(32).hex()),
+            "DEBUG": os.environ.get("DJANGO_DEBUG", "false").lower() == "true",
+            "ALLOWED_HOSTS": os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]").split(","),
             "WSGI_APPLICATION": "django_app.vulnpy_app",
         }
     )

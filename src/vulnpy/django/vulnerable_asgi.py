@@ -52,9 +52,10 @@ def get_trigger_view(name, trigger):
         template = get_template("{}.html".format(name))
 
         if name == "xss" and trigger == "raw":
-            template += "<p>XSS: " + user_input + "</p>"
+            from django.utils.html import escape
+            template += "<p>XSS: " + escape(user_input) + "</p>"
 
-        return HttpResponse(template)
+        return HttpResponse(template, content_type="text/html; charset=utf-8")
 
     return _view
 
